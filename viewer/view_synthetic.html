@@ -1,0 +1,430 @@
+
+<div id="container" style="position:fixed; top:0%; left:0%;"></div>
+
+<div id="info" style="position:absolute; top:800px; font-size: 50px;">
+    <div id="fpsdisplay"></div>
+    <div id="sizedisplay"></div>
+</div>
+
+
+<!-- Write to G-Buffer -->
+<script id="gbuffer-vert" type="x-shader/x-vertex">
+    #version 450
+    #extension GL_ARB_separate_shader_objects : enable
+    #extension GL_ARB_shading_language_420pack : enable
+
+    in vec3 position;
+    in vec2 uv;
+
+    out vec4 outPosition;
+    out vec4 outLocalPosition;
+    out vec3 viewDir;
+
+    uniform mat4 modelViewMatrix;
+    uniform mat4 projectionMatrix;
+    uniform mat4 modelMatrix;
+    uniform vec3 cameraPosition;
+
+    void main() {
+        outPosition = modelViewMatrix * vec4( position, 1.0 );
+        outLocalPosition = vec4(position, 1);
+        gl_Position = projectionMatrix * outPosition;
+        viewDir = (modelMatrix * vec4( position, 1.0 )).rgb - cameraPosition;
+    }
+  
+</script>
+
+
+<script type="module">
+
+  import * as THREE from 'https://unpkg.com/three?module';
+
+  import WebGL from 'https://unpkg.com/three/examples/jsm/capabilities/WebGL.js?module';
+
+  import { OBJLoader } from 'https://unpkg.com/three/examples/jsm/loaders/OBJLoader.js?module';
+
+  import { PLYLoader } from 'https://unpkg.com/three/examples/jsm/loaders/PLYLoader.js?module';
+
+  import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js?module';
+
+
+// modified from SNeRG
+
+//the MLP
+const NeuralTextureShaderFunctions = `
+    #version 450
+    const int TENSORF_RAW_FEATURES = 48;
+    const int TENSORF_OUT_FEATURES = 28;
+
+    uniform vec3 bbox_low;
+    uniform vec3 bbox_high;
+    uniform vec3 tensorf_resolution;
+    uniform mediump sampler3D samplerTensorfXY;
+    uniform mediump sampler3D samplerTensorfYZ;
+    uniform mediump sampler3D samplerTensorfXZ;
+    uniform mediump sampler2D samplerTensorfZ;
+    uniform mediump sampler2D samplerTensorfX;
+    uniform mediump sampler2D samplerTensorfY;
+    uniform mediump sampler2D samplerTensorfMLPWeights;
+
+    in vec4 inPosition;
+    in vec4 inLocalPosition;
+    in vec3 viewDir;
+
+    out vec4 outColor;
+
+    struct PointLight {
+      vec4 position;
+      vec4 emission;
+    };
+
+    struct DirectionalLight {
+      vec4 direction;
+      vec4 emission;
+    };
+
+    struct SpotLight {
+      vec4 position;
+      vec4 direction;
+      vec4 emission;
+    };
+
+    const float C0 = 0.28209479177387814;
+    const float C1 = 0.4886025119029199;
+    const float C2[5] = {1.0925484305920792, -1.0925484305920792, 0.31539156525252005, -1.0925484305920792, 0.5462742152960396};
+
+    void main() {
+      vec3 xyz = inLocalPosition.xyz;
+      vec3 texcoord = (xyz - bbox_low) / (bbox_high - bbox_low);
+      vec3 res = tensorf_resolution;
+
+      texcoord = (texcoord * (res - vec3(1.0)) + 0.5) / res;
+
+      const int TRF_SIZE = TENSORF_RAW_FEATURES / 4;
+      const int TOF_SIZE = TENSORF_OUT_FEATURES / 4;
+
+      // init first layer of mlp
+      vec4 sh[TENSORF_OUT_FEATURES / 4];
+      for (int i = 0; i < TENSORF_OUT_FEATURES / 4; ++i) {
+        sh[i] = vec4(0.0);
+      }
+
+      for (float slice = 0; slice < float(TRF_SIZE); slice += 1.0) {
+        vec4 xy = texture(samplerTensorfXY, vec3(texcoord.xy, (slice + 0.5) / TRF_SIZE));
+        vec4 z = texture(samplerTensorfZ, vec2(texcoord.z, (slice + 0.5) / TRF_SIZE));
+        vec4 t = xy * z;
+
+        for (int i = 0; i < TOF_SIZE; ++i) {
+          sh[i] += vec4(
+            dot(texelFetch(samplerTensorfMLPWeights, ivec2(slice, 4 * i    ), 0), t),
+            dot(texelFetch(samplerTensorfMLPWeights, ivec2(slice, 4 * i + 1), 0), t),
+            dot(texelFetch(samplerTensorfMLPWeights, ivec2(slice, 4 * i + 2), 0), t),
+            dot(texelFetch(samplerTensorfMLPWeights, ivec2(slice, 4 * i + 3), 0), t));
+        }
+      }
+
+      for (float slice = 0; slice < float(TRF_SIZE); ++slice) {
+        vec4 xz = texture(samplerTensorfXZ, vec3(texcoord.xz, (slice + 0.5) / TRF_SIZE));
+        vec4 y = texture(samplerTensorfY, vec2(texcoord.y, (slice + 0.5) / TRF_SIZE));
+        vec4 t = xz * y;
+
+        for (int i = 0; i < TOF_SIZE; ++i) {
+          sh[i] += vec4(
+            dot(texelFetch(samplerTensorfMLPWeights, ivec2(TRF_SIZE + slice, 4 * i    ), 0), t),
+            dot(texelFetch(samplerTensorfMLPWeights, ivec2(TRF_SIZE + slice, 4 * i + 1), 0), t),
+            dot(texelFetch(samplerTensorfMLPWeights, ivec2(TRF_SIZE + slice, 4 * i + 2), 0), t),
+            dot(texelFetch(samplerTensorfMLPWeights, ivec2(TRF_SIZE + slice, 4 * i + 3), 0), t));
+        }
+      }
+
+      for (float slice = 0; slice < float(TRF_SIZE); ++slice) {
+        vec4 yz = texture(samplerTensorfYZ, vec3(texcoord.yz, (slice + 0.5) / TRF_SIZE));
+        vec4 x = texture(samplerTensorfX, vec2(texcoord.x, (slice + 0.5) / TRF_SIZE));
+        vec4 t = yz * x;
+
+        for (int i = 0; i < TOF_SIZE; ++i) {
+          sh[i] += vec4(
+            dot(texelFetch(samplerTensorfMLPWeights, ivec2(2 * TRF_SIZE + slice, 4 * i    ), 0), t),
+            dot(texelFetch(samplerTensorfMLPWeights, ivec2(2 * TRF_SIZE + slice, 4 * i + 1), 0), t),
+            dot(texelFetch(samplerTensorfMLPWeights, ivec2(2 * TRF_SIZE + slice, 4 * i + 2), 0), t),
+            dot(texelFetch(samplerTensorfMLPWeights, ivec2(2 * TRF_SIZE + slice, 4 * i + 3), 0), t));
+        }
+      }
+
+      float b[9];
+
+      float x = viewDir.x;
+      float y = viewDir.y;
+      float z = viewDir.z;
+      float xx = x * x;
+      float yy = y * y;
+      float zz = z * z;
+      float xy = x * y;
+      float xz = x * z;
+      float yz = y * z;
+
+      b[0] = C0;
+      b[1] = -C1 * y;
+      b[2] = C1 * z;
+      b[3] = -C1 * x;
+      b[4] = C2[0] * xy;
+      b[5] = C2[1] * yz;
+      b[6] = C2[2] * (2.0 * zz - xx - yy);
+      b[7] = C2[3] * xz;
+      b[8] = C2[4] * (xx - yy);
+
+      vec3 color = b[0] * vec3(sh[0].x, sh[2].y, sh[4].z)
+                + b[1] * vec3(sh[0].y, sh[2].z, sh[4].w)
+                + b[2] * vec3(sh[0].z, sh[2].w, sh[5].x)
+                + b[3] * vec3(sh[0].w, sh[3].x, sh[5].y)
+                + b[4] * vec3(sh[1].x, sh[3].y, sh[5].z)
+                + b[5] * vec3(sh[1].y, sh[3].z, sh[5].w)
+                + b[6] * vec3(sh[1].z, sh[3].w, sh[6].x)
+                + b[7] * vec3(sh[1].w, sh[4].x, sh[6].y)
+                + b[8] * vec3(sh[2].x, sh[4].y, sh[6].z);
+
+      outColor = vec4(max(color + 0.5, 0), 1.0);
+    }
+
+
+`;
+
+/**
+ * Creates shader code for the view-dependence MLP.
+ *
+ * This populates the shader code in NeuralTextureShaderFunctions with
+ * network weights and sizes as compile-time constants. The result is returned
+ * as a string.
+ *
+ * @param {!Object} scene_params
+ * @return {string}
+ */
+function createNeuralTextureFunctions() {
+
+  let fragmentShaderSource = NeuralTextureShaderFunctions;
+
+  return fragmentShaderSource;
+}
+
+
+  let container;
+
+  let camera, scene, renderer, controls;
+  let renderTarget;
+  let postScene, postCamera;
+
+  let gLastFrame = window.performance.now();
+  let oldMilliseconds = 1000;
+  // let gLoadedOBJs = 0;
+  // let gLoadedPNGs = 0;
+  // let gTotalOBJs = 0;
+  // let gTotalPNGs = 0;
+
+  let gLoadedTexs = 0;
+  let gLoadedPLYs = 0;
+
+  const preset_size_w = 800;
+  const preset_size_h = 800;
+  const object_rescale = 0.1;
+
+  init();
+
+  function init() {
+
+    const params = new URL(window.location.href).searchParams;
+    const objname = params.get('obj');
+
+    let scene_name = 'ficus';
+    if (objname) {
+      scene_name = objname;
+    }
+
+    if ( WebGL.isWebGL2Available() === false ) {
+        document.body.appendChild( WebGL.getWebGL2ErrorMessage() );
+        return;
+    }
+
+    container = document.getElementById( 'container' );
+    renderer = new THREE.WebGLRenderer({
+        powerPreference: 'high-performance',
+        precision: 'highp',
+    });
+    renderer.setPixelRatio( 2 ); //supersampling
+    renderer.setSize( preset_size_w, preset_size_h );
+    renderer.setClearColor( new THREE.Color("rgb(255, 255, 255)"), 1.0 )
+    container.appendChild( renderer.domElement );
+
+    camera = new THREE.PerspectiveCamera( 39, preset_size_w/preset_size_h, 2*object_rescale, 6*object_rescale );
+    camera.position.y = 2.0*object_rescale;
+    camera.position.z = 3.464*object_rescale;
+
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.screenSpacePanning = true;
+
+
+
+    scene = new THREE.Scene();
+
+    fetch('./weights/chair_sample.json').then(response => {
+        return response.json();
+    }).then(json => {
+
+    let network_weights = json;
+    document.write(json["aabb_min"]);
+
+    // let model_path = "/home/sarahwei/code/diffrec/out/nerf_"+scene_name+"_neus_preload_tensorVM_preload_SH_dmt384_noft_sdfreg/models/model_final.pth"; 
+    // let mesh_path = "/home/sarahwei/code/diffrec/out/nerf_"+scene_name+"_neus_preload_tensorVM_preload_SH_dmt384_noft_sdfreg/mesh/mesh.ply";
+    // let transforms_path = "/home/sarahwei/dataset/nerf_synthetic/"+scene_name+"/transforms_test.json";
+    
+    let fragmentShaderSource = createNeuralTextureFunctions();
+
+    for ( let i = 0, il = 1; i < il; i ++ ) {
+        let TensorfXY = new THREE.TextureLoader().load(
+            json["TensorfXY"],
+            function () {
+              gLoadedTexs++;
+              render();
+            }
+        );
+        TensorfXY.magFilter = THREE.NearestFilter;
+        TensorfXY.minFilter = THREE.NearestFilter;
+        let TensorfZ = new THREE.TextureLoader().load(
+            json["TensorfZ"],
+            function () {
+              gLoadedTexs++;
+                render();
+            }
+        );
+        TensorfZ.magFilter = THREE.NearestFilter;
+        TensorfZ.minFilter = THREE.NearestFilter;
+        let TensorfXZ = new THREE.TextureLoader().load(
+            json["TensorfXZ"],
+            function () {
+              gLoadedTexs++;
+              render();
+            }
+        );
+        TensorfXZ.magFilter = THREE.NearestFilter;
+        TensorfXZ.minFilter = THREE.NearestFilter;
+        let TensorfY = new THREE.TextureLoader().load(
+            json["TensorfY"],
+            function () {
+              gLoadedTexs++;
+              render();
+            }
+        );
+        TensorfY.magFilter = THREE.NearestFilter;
+        TensorfY.minFilter = THREE.NearestFilter;
+        let TensorfYZ = new THREE.TextureLoader().load(
+            json["TensorfYZ"],
+            function () {
+              gLoadedTexs++;
+              render();
+            }
+        );
+        TensorfYZ.magFilter = THREE.NearestFilter;
+        TensorfYZ.minFilter = THREE.NearestFilter;
+        let TensorfX = new THREE.TextureLoader().load(
+            json["TensorfX"],
+            function () {
+              gLoadedTexs++;
+              render();
+            }
+        );
+        TensorfX.magFilter = THREE.NearestFilter;
+        TensorfX.minFilter = THREE.NearestFilter;
+        let TensorfMLPWeights = new THREE.TextureLoader().load(
+            json["TensorfMLPWeights"],
+            function () {
+              gLoadedTexs++;
+              render();
+            }
+        );
+        TensorfMLPWeights.magFilter = THREE.NearestFilter;
+        TensorfMLPWeights.minFilter = THREE.NearestFilter;
+
+        let newmat = new THREE.RawShaderMaterial({
+            side: THREE.DoubleSide,
+            vertexShader: document.querySelector( '#gbuffer-vert' ).textContent.trim(),
+            fragmentShader: fragmentShaderSource,
+            uniforms: {
+              bbox_low: {value: json["bbox_low"]},
+              bbox_high: {value: json["bbox_high"]},
+              tensorf_resolution: {value: json["tensorf_resolution"]},
+              samplerTensorfXY: { value: TensorfXY },
+              samplerTensorfZ: { value: TensorfZ },
+              samplerTensorfXZ: { value: TensorfXZ },
+              samplerTensorfY: { value: TensorfY },
+              samplerTensorfYZ: { value: TensorfYZ },
+              samplerTensorfX: { value: TensorfX },
+              samplerTensorfMLPWeights: { value: TensorfMLPWeights }
+            },
+            glslVersion: THREE.GLSL3
+        });
+        for ( let j = 0; j < 1; j ++ ) {
+          new PLYLoader()
+            .load(json["ply_path"], function (object) {
+              object.traverse(function (child) {
+                if (child.type=='Mesh') {
+                  child.material = newmat;
+                }
+              });
+              gLoadedPLYs++;
+              object.scale.x = object_rescale;
+              object.scale.y = object_rescale;
+              object.scale.z = object_rescale;
+              scene.add(object);
+          });
+        }
+    }
+
+    window.addEventListener( 'resize', onWindowResize, false );
+	  onWindowResize();
+
+    animate();
+    });
+  }
+
+  function onWindowResize() {
+
+    camera.aspect = preset_size_w/preset_size_h;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize( preset_size_w, preset_size_h );
+
+    document.getElementById('sizedisplay').innerHTML = "Size: "+(preset_size_w).toFixed(0)+"x"+(preset_size_h).toFixed(0);
+
+    render();
+  }
+
+function updateFPSCounter() {
+	let currentFrame = window.performance.now();
+	let milliseconds = currentFrame - gLastFrame;
+	let smoothMilliseconds = oldMilliseconds * (0.95) + milliseconds * 0.05;
+	let smoothFps = 1000 / smoothMilliseconds;
+	gLastFrame = currentFrame;
+	oldMilliseconds = smoothMilliseconds;
+	if (gTotalOBJs==0 || gLoadedOBJs!=gTotalOBJs || gLoadedPNGs!=gTotalPNGs) {
+		document.getElementById('fpsdisplay').innerHTML = "Loaded OBJs: "+gLoadedOBJs.toFixed(0) + "/" + gTotalOBJs.toFixed(0) + "  Loaded PNGs: "+gLoadedPNGs.toFixed(0) + "/" + gTotalPNGs.toFixed(0);
+	}
+	else {
+		document.getElementById('fpsdisplay').innerHTML = "FPS: "+smoothFps.toFixed(1);
+	}
+}
+
+  function animate() {
+
+    requestAnimationFrame( animate );
+
+    controls.update();
+
+    render();
+
+  }
+
+  function render() {
+    renderer.render( scene, camera );
+    updateFPSCounter();
+  }
+</script>
