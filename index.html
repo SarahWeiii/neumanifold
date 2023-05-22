@@ -5,28 +5,28 @@
     <meta charset="UTF-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-    <title>BakedSDF</title>
+    <title>NeuManifold</title>
 
-    <meta name="description" content="BakedSDF: Meshing Neural SDFs for Real-Time View Synthesis">
+    <meta name="description" content="NeuManifold: Neural Watertight Manifold Reconstruction with Efficient and High-Quality Rendering Support">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- <base href="/"> -->
 
         <!--FACEBOOK-->
-    <meta property="og:image" content="https://bakedsdf.github.io/img/breakdown_new.png">
+    <meta property="og:image" content="img/logo.png">
     <meta property="og:image:type" content="image/png">
     <meta property="og:image:width" content="682">
     <meta property="og:image:height" content="682">
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://bakedsdf.github.io"/>
-    <meta property="og:title" content="BakedSDF" />
-    <meta property="og:description" content="Project page for BakedSDF: Meshing Neural SDFs for Real-Time View Synthesis." />
+    <meta property="og:url" content="https://sarahweiii.github.io/neumanifold"/>
+    <meta property="og:title" content="NeuManifold" />
+    <meta property="og:description" content="Project page for NeuManifold: Neural Watertight Manifold Reconstruction with Efficient and High-Quality Rendering Support." />
 
         <!--TWITTER-->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="BakedSDF" />
-    <meta name="twitter:description" content="Project page for BakedSDF: Meshing Neural SDFs for Real-Time View Synthesis." />
-    <meta name="twitter:image" content="https://bakedsdf.github.io/img/breakdown_new.png"/>
+    <meta name="twitter:title" content="NeuManifold" />
+    <meta name="twitter:description" content="Project page for NeuManifold: Neural Watertight Manifold Reconstruction with Efficient and High-Quality Rendering Support." />
+    <meta name="twitter:image" content="image/png"/>
 
 
 <!--     <link rel="apple-touch-icon" href="apple-touch-icon.png"> -->
@@ -77,30 +77,52 @@
             <h2 class="col-md-12 text-center">
                 NeuManifold: Neural Watertight Manifold Reconstruction with Efficient and High-Quality Rendering Support <br>
                 <small>
-                    Anonymous Authors
+                    <div class="is-size-5 publication-authors" style="margin-top: 15px">
+                        <span class="author-block">
+                          <a href="https://sarahweiii.github.io/">Xinyue Wei</a><sup>1,2</sup>,</span>
+                        <span class="author-block">
+                          <a href="https://www.fbxiang.com/">Fanbo Xiang</a><sup>1</sup>,</span>
+                        <span class="author-block">
+                            <a href="https://sai-bi.github.io/">Sai Bi</a><sup>2</sup>,</span>
+                        <span class="author-block">
+                          <a href="https://apchenstu.github.io/">Anpei Chen</a><sup>3,4</sup>,</span>
+                        <span class="author-block">
+                            <a href="http://www.kalyans.org/">Kalyan Sunkavalli</a><sup>2</sup>,</span>
+                        <span class="author-block">
+                            <a href="https://cseweb.ucsd.edu//~zex014/">Zexiang Xu</a><sup>2</sup>,</span>
+                        <span class="author-block">
+                          <a href="http://ai.ucsd.edu/~haosu/">Hao Su</a><sup>1</sup></span>
+                      </div>
+                      
+                    <div class="is-size-5 publication-authors" style="margin-top: 10px">
+                        <span class="author-block"><sup>1</sup>UC San Diego,</span>
+                        <span class="author-block"><sup>2</sup>Adobe Research,</span>
+                        <span class="author-block"><sup>3</sup>ETH Zürich,</span>
+                        <span class="author-block"><sup>4</sup>University of Tübingen</span>
+                    </div>
                 </small>
             </h2>
         </div>
 
 
         <div class="row">
-                <div class="col-md-8 col-md-offset-2 text-center">
+                <div class="col-md-8 col-md-offset-2 text-center", style="transform: scale(0.8)">
                     <ul class="nav nav-pills nav-justified">
                         <li>
                             <a href="2023 NeuManifold.pdf">
-                            <image src="img/neumanifold_paper_image.png" height="120px"></image>
+                            <image src="img/paper.svg" height="100px"></image>
                                 <h4><strong>Paper</strong></h4>
                             </a>
                         </li>
                         <li>
                             <a href="todo" target="_blank">
-                            <image src="img/youtube_icon.png" height="120px"></image>
+                            <image src="img/youtube_icon.png" height="100px"></image>
                                 <h4><strong>Video</strong></h4>
                             </a>
                         </li>
                         <li>
                             <a href="#demos">
-                            <image src="img/demos-01.png" height="120px"></image>
+                            <image src="img/logo.png" height="100px"></image>
                                 <h4><strong>Demos</strong></h4>
                             </a>
                         </li>
@@ -111,7 +133,7 @@
 
 
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
                 <h3>
                     Abstract
                 </h3>
@@ -134,20 +156,20 @@
 
 
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
                 <h3>
                     Video
                 </h3>
                 <div class="text-center">
                     <div style="position:relative;padding-top:56.25%;">
-                        <iframe src="https://www.youtube.com/embed/fThKXZ6uDTk" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
+                        <iframe src="video/neumanifold.mp4" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
                 <h3>
                     NeuManifold
                 </h3>
@@ -162,7 +184,7 @@
 
 
         <div class="row">
-            <div class="col-md-8 col-md-offset-2" id="demos">
+            <div class="col-md-10 col-md-offset-1" id="demos">
                 <h3>
                     Real-Time Interactive Viewer Demos
                 </h3>
@@ -173,13 +195,13 @@
         </div>
 
         <div class="row">
-            <div class="col-md-4 col-md-offset-2 text-center">
+            <div class="col-md-10 col-md-offset-1 text-center">
                 <ul class="nav nav-pills nav-justified">
                     <li>
-                        <a href="viewer/view_synthetic.html?obj=chair" style="text-decoration: none">
+                        <a href="http://137.110.198.36:8000/viewer/view_synthetic.html?obj=chair" style="text-decoration: none">
                             <!-- <image src="img/chair_ours.png" width="160px"></image> -->
                             <div class="video-compare-container">
-                                <video class="video" id="mesh1" loop="" autoplay="" muted="" src="video/chair_concat.mp4" onplay="resizeAndPlay(this)" style="width:160px"></video>
+                                <video class="video" id="mesh1" loop="" autoplay="" muted="" src="video/chair_concat.mp4" onplay="resizeAndPlay(this)" style="width:120px"></video>
                             </div>
                             <canvas height="400" class="videoMerge" id="mesh1Merge" width="400"></canvas>
                             <h4><strong>Chair</strong></h4>
@@ -194,7 +216,7 @@
                         <a href="https://storage.googleapis.com/jax3d-public/projects/mobilenerf/mobilenerf_viewer_mac/zdeferred_syn_mac_faster.html?obj=chair" style="text-decoration: none">
                         <!-- <image src="img/drums_ours.png" width="160px"></image> -->
                             <div class="video-compare-container">
-                                <video class="video" id="mesh2" loop="" autoplay="" muted="" src="video/drums_concat.mp4" onplay="resizeAndPlay(this)" style="width:160px"></video>
+                                <video class="video" id="mesh2" loop="" autoplay="" muted="" src="video/drums_concat.mp4" onplay="resizeAndPlay(this)" style="width:120px"></video>
                             </div>
                             <canvas height="400" class="videoMerge" id="mesh2Merge" width="400"></canvas>
                             <h4><strong>Drums</strong></h4>
@@ -204,7 +226,7 @@
                         <a href="https://storage.googleapis.com/jax3d-public/projects/mobilenerf/mobilenerf_viewer_mac/zdeferred_syn_mac_faster.html?obj=chair" style="text-decoration: none">
                         <!-- <image src="img/ficus_ours.png" width="160px"></image> -->
                             <div class="video-compare-container">
-                                <video class="video" id="mesh3" loop="" autoplay="" muted="" src="video/ficus_concat.mp4" onplay="resizeAndPlay(this)" style="width:160px"></video>
+                                <video class="video" id="mesh3" loop="" autoplay="" muted="" src="video/ficus_concat.mp4" onplay="resizeAndPlay(this)" style="width:120px"></video>
                             </div>
                             <canvas height="400" class="videoMerge" id="mesh3Merge" width="400"></canvas>
                             <h4><strong>Ficus</strong></h4>
@@ -214,7 +236,7 @@
                         <a href="https://storage.googleapis.com/jax3d-public/projects/mobilenerf/mobilenerf_viewer_mac/zdeferred_syn_mac_faster.html?obj=chair" style="text-decoration: none">
                         <!-- <image src="img/hotdog_ours.png" width="160px"></image> -->
                             <div class="video-compare-container">
-                                <video class="video" id="mesh4" loop="" autoplay="" muted="" src="video/hotdog_concat.mp4" onplay="resizeAndPlay(this)" style="width:160px"></video>
+                                <video class="video" id="mesh4" loop="" autoplay="" muted="" src="video/hotdog_concat.mp4" onplay="resizeAndPlay(this)" style="width:120px"></video>
                             </div>
                             <canvas height="400" class="videoMerge" id="mesh4Merge" width="400"></canvas>
                             <h4><strong>Hotdog</strong></h4>
@@ -225,7 +247,7 @@
                         <a href="https://storage.googleapis.com/jax3d-public/projects/mobilenerf/mobilenerf_viewer_mac/zdeferred_syn_mac_faster.html?obj=chair" style="text-decoration: none">
                         <!-- <image src="img/lego_ours.png" width="160px"></image> -->
                             <div class="video-compare-container">
-                                <video class="video" id="mesh5" loop="" autoplay="" muted="" src="video/lego_concat.mp4" onplay="resizeAndPlay(this)" style="width:160px"></video>
+                                <video class="video" id="mesh5" loop="" autoplay="" muted="" src="video/lego_concat.mp4" onplay="resizeAndPlay(this)" style="width:120px"></video>
                             </div>
                             <canvas height="400" class="videoMerge" id="mesh5Merge" width="400"></canvas>
                             <h4><strong>Lego</strong></h4>
@@ -236,7 +258,7 @@
                         <a href="https://storage.googleapis.com/jax3d-public/projects/mobilenerf/mobilenerf_viewer_mac/zdeferred_syn_mac_faster.html?obj=chair" style="text-decoration: none">
                         <!-- <image src="img/materials_ours.png" width="160px"></image> -->
                             <div class="video-compare-container">
-                                <video class="video" id="mesh6" loop="" autoplay="" muted="" src="video/materials_concat.mp4" onplay="resizeAndPlay(this)" style="width:160px"></video>
+                                <video class="video" id="mesh6" loop="" autoplay="" muted="" src="video/materials_concat.mp4" onplay="resizeAndPlay(this)" style="width:120px"></video>
                             </div>
                             <canvas height="400" class="videoMerge" id="mesh6Merge" width="400"></canvas>
                             <h4><strong>Materials</strong></h4>
@@ -246,7 +268,7 @@
                         <a href="https://storage.googleapis.com/jax3d-public/projects/mobilenerf/mobilenerf_viewer_mac/zdeferred_syn_mac_faster.html?obj=chair" style="text-decoration: none">
                         <!-- <image src="img/mic_ours.png" width="160px"></image> -->
                             <div class="video-compare-container">
-                                <video class="video" id="mesh7" loop="" autoplay="" muted="" src="video/mic_concat.mp4" onplay="resizeAndPlay(this)" style="width:160px"></video>
+                                <video class="video" id="mesh7" loop="" autoplay="" muted="" src="video/mic_concat.mp4" onplay="resizeAndPlay(this)" style="width:120px"></video>
                             </div>
                             <canvas height="400" class="videoMerge" id="mesh7Merge" width="400"></canvas>
                             <h4><strong>Mic</strong></h4>
@@ -256,7 +278,7 @@
                         <a href="https://storage.googleapis.com/jax3d-public/projects/mobilenerf/mobilenerf_viewer_mac/zdeferred_syn_mac_faster.html?obj=chair" style="text-decoration: none">
                         <!-- <image src="img/ship_ours.png" width="160px"></image> -->
                             <div class="video-compare-container">
-                                <video class="video" id="mesh8" loop="" autoplay="" muted="" src="video/ship_concat.mp4" onplay="resizeAndPlay(this)" style="width:160px"></video>
+                                <video class="video" id="mesh8" loop="" autoplay="" muted="" src="video/ship_concat.mp4" onplay="resizeAndPlay(this)" style="width:120px"></video>
                             </div>
                             <canvas height="400" class="videoMerge" id="mesh8Merge" width="400"></canvas>
                             <h4><strong>Ship</strong></h4>
@@ -266,36 +288,38 @@
             </div>
     </div>
 	
-
-        <!-- <div class="row comp-margin">
-            <div class="col-md-8 col-md-offset-2">
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1" id="demos">
                 <h3>
-                    Watertight Manifold Mesh and High-Quality Rendering
+                    Soft-Body Simulation with Real-Time Rendering
                 </h3>
-                <div style="display:flex">
-                    <div class="video-compare-container">
-                        <video class="video" id="mesh1" loop="" autoplay="" muted="" src="img/ficus_concat.mp4" onplay="resizeAndPlay(this)" style="height: 0px;"></video>
-                    </div>
-                    <canvas height="400" class="videoMerge" id="mesh1Merge" width="400"></canvas>
-
-                    <div class="video-compare-container">
-                        <video class="video" id="mesh2" loop="" autoplay="" muted="" src="img/lego_concat.mp4" onplay="resizeAndPlay(this)" style="height: 0px;"></video>
-                    </div>
-                    <canvas height="400" class="videoMerge" id="mesh2Merge" width="400"></canvas>
-                </div>
-                <div style="display:flex">
-                    <div class="video-compare-container">
-                        <video class="video" id="mesh3" loop="" autoplay="" muted="" src="img/ship_concat.mp4" onplay="resizeAndPlay(this)" style="height: 0px;"></video>
-                    </div>
-                    <canvas height="400" class="videoMerge" id="mesh3Merge" width="400"></canvas>
-
-                    <div class="video-compare-container">
-                        <video class="video" id="mesh4" loop="" autoplay="" muted="" src="img/hotdog_concat.mp4" onplay="resizeAndPlay(this)" style="height: 0px;"></video>
-                    </div>
-                    <canvas height="400" class="videoMerge" id="mesh4Merge" width="400"></canvas>
-                </div>
             </div>
-        </div> -->
+        </div>
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <video autoplay controls muted loop playsinline width="100%">
+                    <source src="video/animation.mp4" type="video/mp4">
+                </video>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1" id="demos">
+                <h3>
+                    Real Scene Editing with Soft-Body Simulation
+                </h3>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <video autoplay controls muted loop playsinline width="100%">
+                    <source src="video/flower.mp4" type="video/mp4">
+                </video>
+            </div>
+        </div>
 
 
 		<br>
@@ -303,7 +327,7 @@
 
 
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
                 <h3>
                     Acknowledgements
                 </h3>
