@@ -14,7 +14,8 @@
 
     out vec4 Position;
     out vec4 LocalPosition;
-    out vec3 viewDir;
+    out mat4 mv;
+ // out vec3 viewDir;
 
     uniform mat4 modelViewMatrix;
     uniform mat4 projectionMatrix;
@@ -25,7 +26,8 @@
         Position = modelViewMatrix * vec4( position, 1.0 );
         LocalPosition = vec4(position, 1);
         gl_Position = projectionMatrix * Position;
-        viewDir = (modelMatrix * vec4( position, 1.0 )).rgb - cameraPosition;
+        mv = modelViewMatrix;
+      // viewDir = (modelMatrix * vec4( position, 1.0 )).rgb - cameraPosition;
     }
   
 </script>
@@ -66,7 +68,7 @@ const NeuralTextureShaderFunctions = `
 
     in vec4 Position;
     in vec4 LocalPosition;
-    in vec3 viewDir;
+    in mat4 mv;
 
     out vec4 outColor;
 
@@ -79,6 +81,10 @@ const NeuralTextureShaderFunctions = `
     const float C2_4 = 0.5462742152960396;
 
     void main() {
+
+      vec3 viewDir = Position.xyz;
+      viewDir = normalize(transpose(mat3(mv)) * viewDir);
+
       vec3 xyz = LocalPosition.xyz;
       vec3 texcoord = (xyz - bbox_low) / (bbox_high - bbox_low);
       vec3 res = tensorf_resolution;
@@ -238,9 +244,10 @@ function createNeuralTextureFunctions() {
     renderer.setClearColor( new THREE.Color("rgb(255, 255, 255)"), 1.0 )
     container.appendChild( renderer.domElement );
 
-    camera = new THREE.PerspectiveCamera( 39, preset_size_w/preset_size_h, 2*object_rescale, 6*object_rescale );
+    camera = new THREE.PerspectiveCamera( 39, preset_size_w/preset_size_h, 2*object_rescale, 10*object_rescale );
     camera.position.y = 2.0*object_rescale;
     camera.position.z = 3.464*object_rescale;
+    camera.up = new THREE.Vector3(0, 0, 1);
 
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
