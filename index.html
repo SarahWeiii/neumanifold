@@ -34,12 +34,19 @@
     <!-- Place favicon.ico in the root directory -->
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.8.0/codemirror.min.css">
     <link rel="stylesheet" href="css/app.css">
-
     <link rel="stylesheet" href="css/bootstrap.min.css">
 
+    <!-- <link rel="stylesheet" href="./css/bulma.min.css"> -->
+    <link rel="stylesheet" href="./css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="./css/bulma-slider.min.css">
+    <link rel="stylesheet" href="./css/fontawesome.all.min.css">
+    <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="./css/index.css">
+    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.8.0/codemirror.min.js"></script>
@@ -75,11 +82,11 @@
     <div class="container" id="main">
         <div class="row">
             <h2 class="col-md-12 text-center">
-                NeuManifold: Neural Watertight Manifold Reconstruction with Efficient and High-Quality Rendering Support <br>
+                <b>NeuManifold:</b> Neural Watertight Manifold Reconstruction with Efficient and High-Quality Rendering Support <br>
                 <small>
                     <div class="is-size-5 publication-authors" style="margin-top: 15px">
                         <span class="author-block">
-                          <a href="https://sarahweiii.github.io/">Xinyue Wei</a><sup>1,2</sup>,</span>
+                          <a href="https://sarahweiii.github.io/">Xinyue Wei</a><sup>1</sup>,</span>
                         <span class="author-block">
                           <a href="https://www.fbxiang.com/">Fanbo Xiang</a><sup>1</sup>,</span>
                         <span class="author-block">
@@ -89,9 +96,9 @@
                         <span class="author-block">
                             <a href="http://www.kalyans.org/">Kalyan Sunkavalli</a><sup>2</sup>,</span>
                         <span class="author-block">
-                            <a href="https://cseweb.ucsd.edu//~zex014/">Zexiang Xu</a><sup>2</sup>,</span>
+                            <a href="https://cseweb.ucsd.edu//~zex014/">Zexiang Xu</a><sup>2</sup>*,</span>
                         <span class="author-block">
-                          <a href="http://ai.ucsd.edu/~haosu/">Hao Su</a><sup>1</sup></span>
+                          <a href="http://ai.ucsd.edu/~haosu/">Hao Su</a><sup>1</sup>*</span>
                       </div>
                       
                     <div class="is-size-5 publication-authors" style="margin-top: 10px">
@@ -105,7 +112,7 @@
         </div>
 
 
-        <div class="row">
+        <!-- <div class="row">
                 <div class="col-md-8 col-md-offset-2 text-center", style="transform: scale(0.6)">
                     <ul class="nav nav-pills nav-justified">
                         <li>
@@ -128,7 +135,46 @@
                         </li>
                     </ul>
                 </div>
-        </div>
+        </div> -->
+
+        <br>
+        <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="todo"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <!-- <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span> -->
+                  <span>Paper</span>
+                </a>
+              </span>
+              <!-- Video Link. -->
+              <span class="link-block">
+                <a href="https://www.youtube.com/watch?v=LS7tOld5iJ8"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <!-- <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span> -->
+                  <span>Video</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="#demos"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <!-- <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span> -->
+                  <span>Demo </span>
+                  </a>
+              </span>
+            </div>
+
+          </div>
+
+        <br>
 
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -141,7 +187,7 @@
         </div>
 
         <div class="row">
-            <div class="col-md-10 col-md-offset-1" id="demos">
+            <div class="col-md-10 col-md-offset-1" id="hotdog-demos">
                 <h3>
                     Soft-Body Simulation with Real-Time Rendering
                 </h3>
@@ -186,7 +232,9 @@
                     Video
                 </h3>
                 <div class="text-center">
-                    <iframe src="https://drive.google.com/file/d/1ZV6TKzLZgX4X6lU_x13p_b-Yd4-9fY6n/preview" width="860" height="540"></iframe>
+                    <div style="position:relative;padding-top:56.25%;">
+                        <iframe src="https://www.youtube.com/embed/LS7tOld5iJ8" allowfullscreen="" style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
+                    </div>
                 </div>
             </div>
         </div>
@@ -296,7 +344,7 @@
 
 
         <div class="row">
-            <div class="col-md-10 col-md-offset-1" id="demos">
+            <div class="col-md-10 col-md-offset-1" id="real-demos">
                 <h3>
                     Real Scene Editing with Soft-Body Simulation
                 </h3>

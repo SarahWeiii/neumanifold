@@ -45,3 +45,29 @@
     margin: 0 auto;
     background-size: cover;
 }
+
+.publication-links{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.publication-links .link-block{
+    background-color: rgb(51, 49, 49);
+    color: white;
+    border-radius: 15px;
+    width: 80px;
+    height: 30px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 10px;
+}
+
+.publication-links .link-block a{
+    color: white;
+}
