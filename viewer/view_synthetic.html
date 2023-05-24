@@ -168,10 +168,10 @@ const NeuralTextureShaderFunctions = `
                 + b[7] * vec3(sh[1].w, sh[4].x, sh[6].y)
                 + b[8] * vec3(sh[2].x, sh[4].y, sh[6].z);
 
-      // outColor = vec4(max(color + 0.5, 0.0), 1.0);
-      outColor = vec4(texture(samplerTensorfXZ, vec3(texcoord.xy, 0.5 / 12.0)).xy, 0.0, 1.0);
+       outColor = vec4(max(color + 0.5, 0.0), 1.0);
+      //outColor = vec4(texture(samplerTensorfXZ, vec3(texcoord.xy, 0.5 / 12.0)).xy, 0.0, 1.0);
       // outColor = vec4(texture(samplerTensorfMLPWeights, texcoord.xy).xyz, 1.0);
-
+// outColor = vec4(texture(samplerTensorfX, vec2(texcoord.x, 0.5 / 12.0)).xyz, 1.0);
     }
 
 
@@ -269,13 +269,13 @@ function createNeuralTextureFunctions() {
 
         let fragmentShaderSource = createNeuralTextureFunctions();
 
-        let TensorfXY = new THREE.Data3DTexture( new Float32Array(json[1]["TensorfXY"].map(x => x.map(y => y.flat()).flat()).flat()), json[1]["size"][0], json[1]["size"][1], json[1]["size"][2] );
-        let TensorfZ = new THREE.DataTexture( new Float32Array(json[2]["TensorfZ"].map(x => x.flat()).flat()), json[2]["size"][0], json[2]["size"][1] );
-        let TensorfXZ = new THREE.Data3DTexture( new Float32Array(json[3]["TensorfXZ"].map(x => x.map(y => y.flat()).flat()).flat()), json[3]["size"][0], json[3]["size"][1], json[3]["size"][2] );
-        let TensorfY = new THREE.DataTexture( new Float32Array(json[4]["TensorfY"].map(x => x.flat()).flat()), json[4]["size"][0], json[4]["size"][1] );
-        let TensorfYZ = new THREE.Data3DTexture( new Float32Array(json[5]["TensorfYZ"].map(x => x.map(y => y.flat()).flat()).flat()), json[5]["size"][0], json[5]["size"][1], json[5]["size"][2] );
-        let TensorfX = new THREE.DataTexture( new Float32Array(json[6]["TensorfX"].map(x => x.flat()).flat()), json[6]["size"][0], json[6]["size"][1] );
-        let TensorfMLPWeights = new THREE.DataTexture( new Float32Array(json[7]["TensorfMLPWeights"].map(x => x.flat()).flat()), json[7]["size"][0], json[7]["size"][1] );
+        let TensorfXY = new THREE.Data3DTexture( new Float32Array(json[1]["TensorfXY"].map(x => x.map(y => y.flat()).flat()).flat()), json[1]["size"][2], json[1]["size"][1], json[1]["size"][0] );
+        let TensorfZ = new THREE.DataTexture( new Float32Array(json[2]["TensorfZ"].map(x => x.flat()).flat()), json[2]["size"][1], json[2]["size"][0] );
+        let TensorfXZ = new THREE.Data3DTexture( new Float32Array(json[3]["TensorfXZ"].map(x => x.map(y => y.flat()).flat()).flat()), json[3]["size"][2], json[3]["size"][1], json[3]["size"][0] );
+        let TensorfY = new THREE.DataTexture( new Float32Array(json[4]["TensorfY"].map(x => x.flat()).flat()), json[4]["size"][1], json[4]["size"][0] );
+        let TensorfYZ = new THREE.Data3DTexture( new Float32Array(json[5]["TensorfYZ"].map(x => x.map(y => y.flat()).flat()).flat()), json[5]["size"][2], json[5]["size"][1], json[5]["size"][0] );
+        let TensorfX = new THREE.DataTexture( new Float32Array(json[6]["TensorfX"].map(x => x.flat()).flat()), json[6]["size"][1], json[6]["size"][0] );
+        let TensorfMLPWeights = new THREE.DataTexture( new Float32Array(json[7]["TensorfMLPWeights"].map(x => x.flat()).flat()), json[7]["size"][1], json[7]["size"][0] );
         TensorfMLPWeights.magFilter = THREE.NearestFilter;
         TensorfMLPWeights.minFilter = THREE.NearestFilter;
 
