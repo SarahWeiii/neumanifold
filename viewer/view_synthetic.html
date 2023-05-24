@@ -252,6 +252,7 @@ function createNeuralTextureFunctions() {
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.screenSpacePanning = true;
+    controls.maxPolarAngle = Math.PI / 2.0;
 
 
 
