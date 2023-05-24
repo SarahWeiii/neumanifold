@@ -259,31 +259,30 @@ function createNeuralTextureFunctions() {
     scene = new THREE.Scene();
 
     let json;
-    const urls = ['weights/'+scene_name+'_meta.json',
-                  'weights/'+scene_name+'_TensorfXY.json',
-                  'weights/'+scene_name+'_TensorfZ.json',
-                  'weights/'+scene_name+'_TensorfXZ.json',
-                  'weights/'+scene_name+'_TensorfY.json',
-                  'weights/'+scene_name+'_TensorfYZ.json',
-                  'weights/'+scene_name+'_TensorfX.json',
-                  'weights/'+scene_name+'_TensorfMLPWeights.json'];
+    const urls = ['weights/'+scene_name+'/meta.json',
+                  'weights/'+scene_name+'/TensorfXY',
+                  'weights/'+scene_name+'/TensorfZ',
+                  'weights/'+scene_name+'/TensorfXZ',
+                  'weights/'+scene_name+'/TensorfY',
+                  'weights/'+scene_name+'/TensorfYZ',
+                  'weights/'+scene_name+'/TensorfX',
+                  'weights/'+scene_name+'/TensorfMLPWeights'];
     Promise.all(
-      urls.map(url =>
+      urls.map((url,index) =>
           fetch(url)
-              .then(e => e.json())
+              .then(e => index == 0 ? e.json() : e.arrayBuffer())
           )
       ).then(data => {
-        json = data.flat();
 
         let fragmentShaderSource = createNeuralTextureFunctions();
 
-        let TensorfXY = new THREE.Data3DTexture( new Float32Array(json[1]["TensorfXY"].map(x => x.map(y => y.flat()).flat()).flat()), json[1]["size"][2], json[1]["size"][1], json[1]["size"][0] );
-        let TensorfZ = new THREE.DataTexture( new Float32Array(json[2]["TensorfZ"].map(x => x.flat()).flat()), json[2]["size"][1], json[2]["size"][0] );
-        let TensorfXZ = new THREE.Data3DTexture( new Float32Array(json[3]["TensorfXZ"].map(x => x.map(y => y.flat()).flat()).flat()), json[3]["size"][2], json[3]["size"][1], json[3]["size"][0] );
-        let TensorfY = new THREE.DataTexture( new Float32Array(json[4]["TensorfY"].map(x => x.flat()).flat()), json[4]["size"][1], json[4]["size"][0] );
-        let TensorfYZ = new THREE.Data3DTexture( new Float32Array(json[5]["TensorfYZ"].map(x => x.map(y => y.flat()).flat()).flat()), json[5]["size"][2], json[5]["size"][1], json[5]["size"][0] );
-        let TensorfX = new THREE.DataTexture( new Float32Array(json[6]["TensorfX"].map(x => x.flat()).flat()), json[6]["size"][1], json[6]["size"][0] );
-        let TensorfMLPWeights = new THREE.DataTexture( new Float32Array(json[7]["TensorfMLPWeights"].map(x => x.flat()).flat()), json[7]["size"][1], json[7]["size"][0] );
+        let TensorfXY = new THREE.Data3DTexture( new Float32Array(data[1]), data[0]["TensorfXY"][2], data[0]["TensorfXY"][1], data[0]["TensorfXY"][0] );
+        let TensorfZ = new THREE.DataTexture( new Float32Array(data[2]), data[0]["TensorfZ"][1], data[0]["TensorfXY"][0]);
+        let TensorfXZ = new THREE.Data3DTexture( new Float32Array(data[3]), data[0]["TensorfXZ"][2], data[0]["TensorfXZ"][1], data[0]["TensorfXZ"][0] );
+        let TensorfY = new THREE.DataTexture( new Float32Array(data[4]), data[0]["TensorfY"][1], data[0]["TensorfY"][0] );
+        let TensorfYZ = new THREE.Data3DTexture( new Float32Array(data[5]), data[0]["TensorfYZ"][2], data[0]["TensorfYZ"][1], data[0]["TensorfYZ"][0] );
+        let TensorfX = new THREE.DataTexture( new Float32Array(data[6]), data[0]["TensorfX"][1], data[0]["TensorfX"][0] );
+        let TensorfMLPWeights = new THREE.DataTexture( new Float32Array(data[7]), data[0]["TensorfMLPWeights"][1], data[0]["TensorfMLPWeights"][0] );
         TensorfMLPWeights.magFilter = THREE.NearestFilter;
         TensorfMLPWeights.minFilter = THREE.NearestFilter;
 
@@ -306,9 +305,9 @@ function createNeuralTextureFunctions() {
             vertexShader: document.querySelector( '#gbuffer-vert' ).textContent.trim(),
             fragmentShader: fragmentShaderSource,
             uniforms: {
-              bbox_low: {value: json[0]["meta"]["bbox_low"]},
-              bbox_high: {value: json[0]["meta"]["bbox_high"]},
-              tensorf_resolution: {value: json[0]["meta"]["tensorf_resolution"]},
+              bbox_low: {value: data[0]["bbox_low"]},
+              bbox_high: {value: data[0]["bbox_high"]},
+              tensorf_resolution: {value: data[0]["tensorf_resolution"]},
               samplerTensorfXY: { value: TensorfXY },
               samplerTensorfZ: { value: TensorfZ },
               samplerTensorfXZ: { value: TensorfXZ },
@@ -320,18 +319,13 @@ function createNeuralTextureFunctions() {
             glslVersion: THREE.GLSL3
         });
         for ( let j = 0; j < 1; j ++ ) {
-          new OBJLoader()
-            .load('weights/'+scene_name+'.obj', function (object) {
-              object.traverse(function (child) {
-                if (child.type=='Mesh') {
-                  child.material = newmat;
-                }
-              });
-              gLoadedPLYs++;
-              object.scale.x = object_rescale;
-              object.scale.y = object_rescale;
-              object.scale.z = object_rescale;
-              scene.add(object);
+          new PLYLoader()
+            .load('weights/'+scene_name+'.ply', function (object) {
+              const mesh = new THREE.Mesh( object, newmat );
+              mesh.scale.x = object_rescale;
+              mesh.scale.y = object_rescale;
+              mesh.scale.z = object_rescale;
+              scene.add(mesh);
           });
         }
 
